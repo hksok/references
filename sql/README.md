@@ -325,5 +325,146 @@ WHERE filters before data is grouped
 HAVING filters after data is grouped
 Rows eliminated by the WHERE clause will not be included in the group
 
+### Subqueries
 
+- queries embedded into other queries
+- relational databases store data in multiple tables
+- subqueries merge data from multiple sources together
+- helps with adding other filtering criteria
 
+```sql
+SELECT 
+CustomerID,
+CompanyName,
+Region
+FROM Customers
+WHERE CustomerID IN (
+        SELECT CustomerID
+        FROM Orders
+        WHERE Freight > 100
+);
+```
+
+subquery selects can only retrieve a single column
+
+```sql
+SELECT Customer_name, Customer_contact
+FROM Customers
+WHERE cust_id IN
+    SELECT customer_id
+    FROM Orders
+    WHERE order_number IN (SELECT order_number
+          FROM OrderItems
+          WHERE prod_name = 'Toothbrush');
+```
+
+```sql
+SELECT customer_name,
+customer_state,
+(SELECT COUNT(*) AS orders
+ FROM Orders
+ WHERE Orders.customer_id = Customer.customer_id) AS orders
+ FROM Customers
+ ORDER BY Customer_name;
+```
+
+### Joins
+
+Cartesian Join (Cross Join)
+
+- each row from the first table joins with all the rows of another table
+
+```sql
+SELECT product_name,
+unit_price,
+company_name
+FROM suppliers CROSS JOIN products;
+```
+
+### Inner Joins
+
+```sql
+SELECT suppliers.CompanyName,
+ProductName,
+UnitPrice
+FROM Suppliers INNER JOIN Products
+ON Suppliers.supplierid = Products.supplierid
+```
+
+```sql
+SELECT o.OrderID, c.CompanyName, e.LastName
+FROM ((Orders o INNER JOIN Customers c ON o.CustomerID = c.CustomerID) INNER JOIN Employees e ON o.EmployeeID = e.EmployeeID);
+```
+
+### Aliases and Self Joins
+
+```sql
+SELECT vendor_name,
+product_name,
+product_price
+FROM Vendors AS v, Products AS p
+WHERE v.vendor_id = p.vendor_id;
+```
+
+```sql
+SELECT A.CustomerName AS CustomerName1,
+B.CustomerName AS CustomerName2,
+A.City
+FROM Customers A, Customers B
+WHERE A.CustomerID = B.CustomerID
+AND A.City=B.City
+ORDER BY A.City;
+```
+
+### Left Join
+
+```sql
+SELECT C.CustomerName, O.OrderID
+FROM Customers C
+LEFT JOIN Orders O 
+ON C.CustomerID = O.CustomerID
+ORDER BY C.CustomerName;
+```
+
+### Right Join
+
+```sql
+SELECT Orders.OrderID,
+Employees.LastName,
+Employees.FirstName
+FROM Orders
+RIGHT JOIN Employees
+ON Orders.EmployeeID=Employeees.EmployeeID
+ORDER BY Orders.OrderID;
+```
+
+### Full Outer Join
+
+- not supported by SQLite
+
+```sql
+SELECT Customers.CustomerName,
+Orders.OrderID
+FROM Custoemrs
+FULL OUTER JOIN Orders 
+ON Customers.CustomerID = Orders.CustomerID
+ORDER BY Customers.CustomerName;
+```
+
+### Unions
+
+- The UNION operator is used to combine the result-set of two or more SELECT statements
+- Each SELECT statement within UNION must have the same number of columns
+- Columns must have similar data types
+- The columns in each SELECT statement must be in the same order
+
+```sql
+SELECT City, Country 
+FROM Customers
+WHERE Country='Germany'
+UNION
+SELECT City, Country
+FROM Suppliers
+WHERE Country='Germany'
+ORDER BY City;
+```
