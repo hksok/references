@@ -468,3 +468,137 @@ FROM Suppliers
 WHERE Country='Germany'
 ORDER BY City;
 ```
+
+### Working with text strings
+
+**Concatenations**
+
+- note: SQL server supports + instead of ||
+
+```sql
+SELECT
+CompanyName,
+ContactName,
+CompanyName || ' ('|| ContactName || ')'
+```
+
+**trim**
+
+- TRIM
+- LTRIM
+- RTRIM
+
+**Substring**
+
+SUBSTR(string name, string position, number of characters to be returned)
+
+```sql
+SELECT first_name,
+SUBSTR(first_name, 3, 4)
+FROM employees
+WHERE department_id=100
+```
+
+**Upper and Lower**
+
+```sql
+SELECT UPPER(column_name),
+LOWER(column_name)
+FROM table_name;
+```
+
+### Dates and Times
+
+```sql
+SELECT Birthdate,
+STRFTIME('%Y', Birthdate) AS Year,
+STRFTIME('%m', Birthdate) AS Month,
+STRFTIME('%d', Birthdate) AS Day
+FROM employees;
+```
+
+- compute current date
+
+```sql
+SELECT DATE('now')
+```
+
+```sql
+SELECT STRFTIME('%Y %m %d', 'now')
+```
+
+```sql
+SELECT STRFTIME('%H %M %S %s', 'now')
+```
+
+```sql
+SELECT Birthdate,
+STRFTIME('%Y', Birthdate) AS Year,
+STRFTIME('%m', Birthdate) AS Month,
+STRFTIME('%d', Birthdate) AS Day,
+DATE(('now') - Birthdate) AS Age
+FROM employees;
+```
+
+### Case Statements
+
+- mimics if-then-else statement found in most programming languages
+- can be used in SELECT, INSERT, UPDATE, and DELETE statements
+
+```sql
+SELECT 
+employeeid,
+firstname,
+lastname,
+city,
+CASE city
+WHEN 'Calgary' THEN 'Calgary'
+ELSE 'Other'
+END calgary
+FROM Employees
+ORDER BY LastName, FirstName;
+```
+
+```sql
+SELECT
+trackid,
+name,
+bytes,
+CASE 
+WHEN bytes < 300000 THEN 'small'
+WHEN bytes >= 300001 AND bytes <= 500000 THEN 'medium'
+WHEN bytes >= 500001 THEN 'large'
+ELSE 'Other'
+END bytescategory
+FROM tracks;
+```
+
+### Views
+
+- A stored query
+- can add or remove columns without changing schema
+- use it to encapsulate queries
+- the view will be removed after database connection has ended
+
+```sql
+CREATE [TEMP] VIEW [IF NOT EXISTS]
+view_name(column-name-list)
+AS 
+select-statement;
+```
+
+```sql
+CREATE VIEW my_view
+AS
+SELECT
+r.regiondescription,
+t.territorydescription,
+e.lastname,
+e.Firstname,
+e.Hiredate,
+e.Reportsto
+FROM Region r
+INNER JOIN Territories t on r.regionid = t.regionid
+INNER JOIN Emploeeterritories et t.TerritoryID = et.TerritoryID
+INNER JOIN Employees e on et.employeeid = e.EmployeeID
+```
