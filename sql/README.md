@@ -602,3 +602,48 @@ INNER JOIN Territories t on r.regionid = t.regionid
 INNER JOIN Emploeeterritories et t.TerritoryID = et.TerritoryID
 INNER JOIN Employees e on et.employeeid = e.EmployeeID
 ```
+
+### CAST
+
+```sql
+SELECT
+event_id,
+event_time,
+user_id,
+platform,
+(CASE WHEN parameter_name == 'viewed_user_id'
+      THEN CAST(parameter_value AS INT)
+      ELSE NULL
+      END) AS viewed_user_id
+FROM 
+   dsv1069.events
+WHERE
+   event_name = 'view_user_profile'
+```
+
+### COALESCE
+
+The COALESCE() function returns the first non-null value in a list.
+
+```sql
+SELECT COALESCE(NULL, NULL, NULL, 'W3Schools.com', NULL, 'Example.com');
+```
+
+```sql
+SELECT
+COALESCE(parent_user_id, user_id) AS original_user_id,
+parent_user_id,
+user_id
+FROM dsv1069.users;
+```
+
+### Identifying unreliable data + nulls
+
+```sql
+SELECT *
+FROM example_table et
+JOIN other_example_table oet
+ON oet.user_id = et.user_id
+AND et.user_id IS NOT NULL
+```
+
