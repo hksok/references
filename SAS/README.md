@@ -166,3 +166,35 @@ run;
 proc contents data=EU_SPORT_TRADE;
 run;
 ```
+
+---
+
+## Exploring Data with SAS
+
+```sas
+/* list first 10 rows */
+proc print data=pg1.storm_summary (obs=10);
+    var Season Name Basin MaxWindMPH MinPressure StartDate EndDate;
+run;
+```
+
+```sas
+/* calculate summary statistics */
+proc means data=pg1.storm_summary;
+    var MaxWindMPH MinPressure;
+run;
+```
+
+```sas
+/* examine extreme values */
+proc univariate data=pg1.storm_summary;
+    var MaxWindMPH MinPressure;
+run;
+```
+
+```sas
+/* list unique values and frequencies */
+proc freq data=pg1.storm_summary;
+    tables Basin Type Season;
+run;
+```
