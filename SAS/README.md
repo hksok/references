@@ -312,3 +312,41 @@ proc print data=pg1.storm_damage;
     format Date mmddyy10. Cost dollar16.;
 run;
 ```
+
+---
+
+## Sort data
+
+```sas
+proc sort data=pg1.class_test2 out=test_sort;
+    by Subject descending TestScore;
+run;
+```
+
+---
+
+## remove duplicates
+
+```sas
+proc sort data=pg1.class_test3
+    out=test_clean
+    nodupkey
+    dupout=test_dups;
+    by _all_;
+run;
+```
+
+```sas
+proc sort data=pg1.storm_detail out=storm_clean nodupkey dupout=storm_dups;
+    by _all_;
+run;
+
+proc sort data=pg1.storm_detail out=min_pressure;
+    where Pressure is not missing and Name is not missing;
+    by descending Season Basin Name Pressure;
+run;
+
+proc sort data=min_pressure nodupkey;
+    by descending Season Basin Name;
+run;
+```
