@@ -198,3 +198,101 @@ proc freq data=pg1.storm_summary;
     tables Basin Type Season;
 run;
 ```
+
+---
+
+## filter rows
+
+```sas
+proc print data=sashelp.cars;
+    var Make Model Type MSRP MPG_City MPG_Highway;
+    where Type="SUV" and MSRP <= 30000;
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where MaxWindMPH >= 156;
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where Basin = "WP";
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where Basin in ("SI", "NI");
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where StartDate >= "01jan2020"d;
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where Type="TS" and Hem_EW="W";
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary;
+    *Add WHERE statement;
+    where MaxWindMPH>156 or 0<MinPressure<920;
+run;
+```
+
+```sas
+proc print data=pg1.storm_summary(obs=50);
+	*where MinPressure is missing; /*same as MinPressure = .*/
+	*where Type is not missing; /*same as Type ne " "*/
+	*where MaxWindMPH between 150 and 155;
+	*where Basin like "_I";
+run;
+```
+
+---
+
+## creating and using macro variables
+
+%LET macro-variable=value;
+
+```sas
+%let CarType=Wagon;
+
+proc print data=sashelp.cars;
+    where Type="&CarType";
+    var Type Make Model MSRP;
+run;
+
+proc means data=sashelp.cars;
+    where Type="&CarType";
+    var MSRP MPG_Highway;
+run;
+
+proc freq data=sashelp.cars;
+    where Type="&CarType";
+    tables Origin Make;
+run;
+```
+
+```sas
+%let WindSpeed=156;
+%let BasinCode=NA;
+%let Date=01Jan2000;
+
+proc print data=pg1.storm_summary;
+    where MaxWindMPH>=&WindSpeed and Basin="&BasinCode" and StartDate>="&Date"d;
+    var Basin Name StartDate EndDate MaxWindMPH;
+run;
+```
