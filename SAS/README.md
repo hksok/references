@@ -296,3 +296,19 @@ proc print data=pg1.storm_summary;
     var Basin Name StartDate EndDate MaxWindMPH;
 run;
 ```
+
+---
+
+## Formatting Columns
+
+```sas
+proc print data=pg1.class_birthdate;
+    format Height Weight 3. Birthdate date9.;
+run;
+```
+
+```sas
+proc print data=pg1.storm_damage;
+    format Date mmddyy10. Cost dollar16.;
+run;
+```
