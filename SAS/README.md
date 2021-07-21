@@ -350,3 +350,87 @@ proc sort data=min_pressure nodupkey;
     by descending Season Basin Name;
 run;
 ```
+
+---
+
+## Using the DATA step to create a SAS data set
+
+```sas
+DATA output-table;
+    SET input-table;
+run;
+```
+
+```sas
+data myclass;
+    set sashelp.class;
+run;
+```
+
+DATA Step Procesing
+
+Compilation
+
+- check syntax for errors
+- identify column attributes
+- establish new table metadata
+
+Execution
+
+- read and write data
+- perform data manipulations, calculations, and so on
+
+```sas
+data myclass;
+    set sashelp.class;
+    where Age >= 15;
+    *keep Name Age Height;
+    *drop Sex Weight;
+    format Height 4.1 Weight 3.
+run;
+```
+
+```sas
+data cars_new;
+    set sashelp.cars;
+    where Origin ne "USA";
+    Profit = MSRP-Invoice;
+    Source = "Non-US Cars";
+    format Profit dollar10.;
+    keep Make Model MSRP Invoice Profit Source;
+run;
+```
+
+```sas
+data tropical_storm;
+    set pg1.storm_summary;
+    drop Hem_EW Hem_NS Lat Lon;
+    where Type="TS";
+    *Add assignment and FORMAT statements;
+    MaxWindKM=MaxWindMPH*1.60934;
+    format MaxWindKM 3.;
+    StormType="Tropical Storm";
+run;
+```
+
+```sas
+data storm_new;
+    set pg1.storm_summary;
+    drop Type Hem_EW Hem_NS MinPrssure Lat Lon;
+    *Add assignment statements;
+    Basin=upcase(basin);
+    Name=propcase(Name);
+    Hemisphere=cats(Hem_NS, Hem_EW);
+    Ocean=substr(Basin, 2, 1);
+run;
+```
+
+```sas
+data storm_new;
+    set pg1.storm_damage;
+    drop Summary;
+    YearsPassed=yrdif(Date, today(), "age");
+    Anniversary=mdy(month(Date), day(Date), year(today()));
+    format YearsPassed 4.1 Date Anniversary mmddyy10.;
+run;
+```
