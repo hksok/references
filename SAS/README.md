@@ -434,3 +434,78 @@ data storm_new;
     format YearsPassed 4.1 Date Anniversary mmddyy10.;
 run;
 ```
+
+---
+
+## Conditional Processing
+
+```sas
+data cars2;
+    set sashelp.cars;
+    if MSRP < 30000 then Cost_Group=1;
+    if MSRP >= 30000then Cost_Group=2;
+    keep Make Model Type MSRP Cost_Group;
+run;
+```
+
+```sas
+data storm_new;
+    set pg1.storm_summary;
+    keep Season Name Basin MinPressure PressureGroup;
+    *Add IF-THEN statemenets;
+    if MinPressure=. then PressureGroup=.;
+    if MinPressure <= 920 then PressureGroup=1;
+    if MinPressure > 920 then PressureGroup=0;
+run;
+```
+
+```sas
+data cars2;
+    set sashelp.cars;
+    length CarType $ 6;
+    if MSRP < 60000 then CarType="Basic";
+    else CarType="Luxury";
+    keep Make Model MSRP CarType;
+run;
+```
+
+```sas
+data under40 over40;
+    set sashelp.cars;
+    keep Make Model msrp cost_group;
+    if MSRP < 20000 then do;
+        Cost_Group=1;
+        output under40;
+    end;
+    else if MSRP < 40000 then do;
+        Cost_Group=2;
+        output under40;
+    end;
+    else do;
+        Cost_Group=3;
+        output over40;
+    end;
+run;
+```
+
+```sas
+data indian atlantic pacific;
+    set pg1.storm_summary;
+    length Ocean $ 8;
+    keep Basin Season Name MaxWindMPH Ocean;
+    Basin=upcase(Basin);
+    OceanCode=substr(Basin, 2, 1);
+    if OceanCode="I" then do;
+        Ocean="Indian";
+        output indian;
+    end;
+    else if OceanCode="A" then do;
+        Ocean="Atlantic";
+        output atlantic;
+    end;
+    else do;
+        Ocean="Pacific";
+        output pacific;
+    end;
+run;
+```
