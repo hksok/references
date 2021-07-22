@@ -509,3 +509,155 @@ data indian atlantic pacific;
     end;
 run;
 ```
+
+---
+
+## Reporting
+
+```sas
+title1 "Class Report";
+title2 "All Students";
+footnote1 "Report Generated on 01SEP2018";
+proc print data=pg1.class_birthdate;
+run;
+```
+
+```sas
+%let age=13;
+
+title1 "Class Report";
+title2 "Age=&age";
+footnote1 "School Use Only";
+
+proc print data=pg1.class_birthdate;
+    where age=&age;
+run;
+
+title;
+footnote;
+```
+
+```sas
+proc means data=sashelp.cars;
+    where type="Sedan";
+    var Make Model MSRP MPG_Highway MPG_City;
+    label MSRP="Manufacturer Suggested Retail Price" MPG_Highway="Highway Miles per Gallon";
+run;
+```
+
+---
+
+## Segmenting Reports
+
+```sas
+proc sort data=sashelp.cars;
+    out=cars_sort;
+    by Origin;
+run;
+
+proc freq data=cars_sort;
+    by Origin;
+    tables Type;
+run;
+```
+
+## creating frequency reports and graphs
+
+```sas
+proc freq data=pg1.storm_final order=freq nlevels;
+    tables BasinName StartDate /nocum;
+    format StartDate monname.;
+run;
+```
+
+```sas
+ods graphics on;
+odsnoproctitle;
+title "Frequency Report for Basin and Storm Month";
+proc freq data=pg1.storm_final order=freq nlevels;
+    tables BasinName StartDate /nocum plots=freqplot(orient=horizontal scale=percent);
+    format StartDate monname.;
+    label BasinName="Basin" StartDate="Storm Month";
+run;
+title;
+ods proctitle;
+```
+
+---
+
+## creating two-way frequency reports
+
+```sas
+proc freq data=sashelp.heart;
+    tables BP_Status*Chol_Status;
+run;
+```
+
+```sas
+proc freq data=pg1.storm_final;
+    tables BasinName*StartDate / norow nocol nopercent;
+    format StartDate monname.;
+    label BasinName="Basin" StartDate="Storm Month";
+run;
+```
+
+```sas
+proc freq data=pg1.storm_final;
+    tables BasinName*StartDate / crosslist;
+    format StartDate monname.;
+    label BasinName="Basin" StartDate="Storm Month";
+run;
+```
+
+```sas
+proc freq data=pg1.storm_final noprint;
+    tables BasinName*StartDate / out=stormcounts;
+    format StartDate monname.;
+    label BasinName="Basin" StartDate="Storm Month";
+run;
+```
+
+---
+
+## creating a summary statistics report
+
+```sas
+proc means data=pg1.storm_final;
+    var MaxWindMPH;
+run;
+```
+
+```sas
+proc means data=pg1.storm_final mean median min max maxdec=0;
+    var MaxWindMPH;
+run;
+```
+
+```sas
+proc means data=pg1.storm_final mean median min max maxdec=0;
+    var MaxWindMPH;
+    class BasinName StormType;
+    ways 1;
+run;
+```
+
+```sas
+proc means data=pg1.storm_final mean median min max maxdec=0;
+    var MaxWindMPH;
+    class BasinName StormType;
+    ways 0 1 2;
+run;
+```
+
+---
+
+## Creating an output summary table
+
+```sas
+proc means data=sashelp.heart noprint;
+    var Weight;
+    class Chol_Status;
+    ways 1;
+    output out=heart_stats mean=AvgWeight;
+run;
+```
