@@ -661,3 +661,56 @@ proc means data=sashelp.heart noprint;
     output out=heart_stats mean=AvgWeight;
 run;
 ```
+
+---
+
+### call symput
+
+- for example, to assign the character string `testing` to macro variable `new`, submit the following statement:
+
+```sas
+call symput('new', 'testing');
+```
+
+### intnx
+
+The intnx function increments a date, time, or datetime value by intervals such as DAY, WEEK, QTR, and MINUTE, or a custom interval that you define. 
+
+The increment is based on a starting date, time or datetime value, and on the number of time intervals that you specify.
+
+The INTNX function returns the SAS date value for the beginning date, time, or datetime value of the interval that you specify in the start–from argument. (To convert the SAS date value to a calendar date, use any valid SAS date format, such as the DATE9. format.) The following example shows how to determine the date of the start of the week that is six weeks from the week of October 17, 2003.
+
+```sas
+x=intnx('week', '17oct03'd, 6);
+put x date9.;
+```
+
+---
+
+### writing output without creating a data set
+
+In many cases, when you use a DATA step to write a report, you do not need to create an additional data set. When you use the `data _null_` statement, SAS processes the DATA step without writing observations to a data set. Using the `data _null_` statement can increase program efficiency considerably.
+
+```sas
+data _null_;
+   length medalist $ 19;
+   input year 1-4  medalist $ 6-24  medal $ 26-31 country $ 33-35 result 37-41; 
+   put medalist country medal result year;
+   datalines;
+1984 Lingjuan Li         SILVER CHN 2559
+1984 Jin-Ho Kim          BRONZE KOR 2555
+1988 Soo-Nyung Kim       GOLD   KOR 2683
+     Hee-Kyung Wang      SILVER KOR 2612
+1988 Young-Sook Yun      BRONZE KOR 2593
+1992 Youn-Jeong Cho      GOLD   KOR 113
+1992 Soo-Nyung Kim       SILVER KOR 105
+1992 Natalya Valeyeva    BRONZE URS     
+1996 Kyung-Wook Kim      GOLD   KOR     
+1996 Ying He             SILVER CHN     
+1996 Olena Sadovnycha    BRONZE UKR     
+2000 Mi-Jin Jun          GOLD   KOR 107 
+2000 Nam-Soon Kim        SILVER KOR 106 
+2000 Soo-Nyung Kim       BRONZE KOR 103 
+;
+run;
+```
