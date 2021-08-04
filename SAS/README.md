@@ -714,3 +714,106 @@ data _null_;
 ;
 run;
 ```
+
+---
+
+## Exporting Data
+
+```sas
+proc export data=sashelp.cars
+    outfile="s:/workshop/output/cars.txt"
+    dbms=tab replace;
+run;
+```
+
+```sas
+libname myxl xlsx "&outpath/cars.xlsx";
+
+data myxl.asiacars;
+    set sashelp.cars;
+    where origin='Asia';
+run;
+
+libname myxl clear;
+```
+
+```sas
+
+libname xlout xlsx "&outpath/southpacific.xlsx";
+
+data South_Pacific;
+    set pg1.storm_final;
+    where Basin="SP";
+run;
+
+proc means data=pg1.storm_final noprint maxdec=1;
+    where Basin="SP";
+    var MaxWindKM;
+    class Season;
+    ways 1;
+    output out=Season_Stats n=Count mean=AvgMaxWindKM max=StrongestWindKM;
+run;
+
+libname xlout clear;
+```
+
+---
+
+## SAS Output Delivery System
+
+sas procedure -> output objects -> ODS destinations
+
+```sas
+ods csvall file="&outpath/cars.csv";
+proc print data=sashelp.cars noobs;
+    var Make Model Type MSRP MPG_City MPG_Highway;
+    format MSRP dollar8.;
+run;
+ods csvall close;
+```
+
+```sas
+proc template;
+    list styles;
+run;
+ods excel file="&outpath/wind.xlsx" style=sasdocprinter
+          options(sheet_name='Wind Stats');
+title "Wind Statistics by Basin";
+ods noproctitle;
+proc means data=pg1.storm_final min mean median max maxdec=0;
+    class BasinName;
+    var MaxWindMPH;
+run;
+
+ods excel options(sheet_name='Wind Distribution');
+title "Distribution of Maximum Wind";
+proc sgplot data=p1.storm_final;
+    histogram MaxWindMPH;
+    density MaxWindMPH;
+run;
+title;
+ods proctitle;
+ods excel close;
+```
+
+```sas
+ods pdf file="&outpath/wind.pdf" startpage=no style=journal pdftoc=1;
+ods noproctitle;
+
+ods proclabel "Wind Statistics";
+title "Wind Statistics By Basin";
+proc means data=pg1.storm_final min mean median max maxdec=0;
+    class BasinName;
+    var MaxWindMPH;
+run;
+
+ods proclabel "Wind Distribution";
+title "Distribution of Maximum Wind";
+proc sgplot data=pg1.storm_final;
+    histogram MaxWindMPH;
+    density MaxWindMPH;
+run;
+title;
+
+ods pdf close;
+```
