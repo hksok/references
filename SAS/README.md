@@ -817,3 +817,84 @@ title;
 
 ods pdf close;
 ```
+
+---
+
+## SQL and SAS
+
+SQL usually used in `Prepare data` and `Analyze and report on data`.
+
+- language of most database management systems (DBMS)
+- available in SAS as PROC SQL
+- alternative to DATA step or certain PROC steps
+
+```sas
+PROC SQL;
+SELECT clause
+    FROM clause
+        <WHERE clause>
+            <ORDER BY clause>
+QUIT;
+```
+
+```sas
+proc sql;
+select Name, Age, Height*2.54 as HeightCM, Birthdate format=date9.
+    from pg1.class_birthdate;
+    where age > 14;
+    order by Height desc;
+quit;
+```
+
+```sas
+title "International Storms since 2000";
+title2 "Category 5 (Wind>156)";
+proc sql;
+select Season, propcase(Name) as Name, StartDate format=mmddyy10., MaxWindMPH
+    from pg1.storm_final
+    where MaxWindMPH > 156 and Season > 2000
+    order by MaxWindMPH desc, Name;
+quit;
+title;
+```
+
+---
+
+## Creating and Deleting Tables in SQL
+
+```sas
+proc sql;
+create table work.myclass as
+    select Name, Age, Height
+        from pg1.class_birthdate
+        where age > 14
+        order by Height desc;
+quit;
+```
+
+```sas
+proc sql;
+    drop table work.myclass;
+quit;
+```
+
+```sas
+proc sql;
+select Grade, Age, Teacher
+    from pg1.class_update inner join pg1.class_teachers
+    on class_update.Name = class_teachers.Name;
+quit;
+```
+
+---
+
+## table aliases
+
+```sas
+proc sql;
+select u.Name, Grade, Age, Teacher
+    from pg1.class_update as u
+        inner join pg1.clas_teachers as t
+        on u.Name=t.Name;
+quit;
+```
